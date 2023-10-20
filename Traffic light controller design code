@@ -1,0 +1,54 @@
+module traffic_signal(
+input logic clk,rst,
+input logic a,b,
+output logic[1:0] y1,y2
+);
+
+typedef enum logic[1:0]{s0,s1,s2,s3} state;
+state current_state,next_state;
+
+// state register
+always_ff@(posedge clk)
+begin
+if(rst) current_state<=s0;
+else current_state<=next_state;
+end
+
+//state transition
+always_comb
+begin
+case(current_state)
+s0: if(a) next_state=s0;
+    else next_state=s1;
+s1: next_state=s2;
+s2: if(b) next_state=s2;
+    else next_state=s3;
+s3: next_state=s0;
+default: if(a==1&b==1) next_state=s0;
+endcase
+end
+
+always_comb
+begin
+if(current_state==s0)
+begin
+y1=2'b11;
+y2=2'b00;
+end
+if(current_state==s1)
+begin
+y1=2'b10;
+y2=2'b00;
+end
+if(current_state==s2)
+begin
+y1=2'b00;
+y2=2'b11;
+end
+if(current_state==s3)
+begin
+y1=2'b00;
+y2=2'b10;
+end
+end
+endmodule
