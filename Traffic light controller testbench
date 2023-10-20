@@ -1,1 +1,25 @@
+module traffic_signal_tb;
+logic clk,rst,a,b;
+logic[1:0] y1,y2;
+
+traffic_signal dut(.clk(clk),.rst(rst),.a(a),.b(b),.y1(y1),.y2(y2));
+
+initial begin
+clk=0;
+forever
+#10 clk=~clk;
+end
+
+initial begin
+rst=1;
+#20 rst=0;
+#10 a=1;b=0;
+#21 a=1;b=1;
+#21 a=0;b=1;
+#21 a=0;b=0;
+#100
+#10 rst=1;
+$finish;
+end
+endmodule
 
