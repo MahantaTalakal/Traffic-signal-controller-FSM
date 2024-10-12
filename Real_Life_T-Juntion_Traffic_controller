@@ -1,0 +1,154 @@
+module traffic_light2
+#(parameter G2Y=10, Y2R=5)
+(
+  input logic clk,
+  input logic rst,
+  output logic[2:0] y1, y2, y3, y4,
+  output logic[5:0] counter
+);
+
+  typedef enum logic[2:0] {s0, s1, s2, s3, s4, s5, s6} statetype;
+  statetype currentState, nextState;
+
+  always_ff @(posedge clk or posedge rst) begin
+    if (rst) begin
+      currentState <= s0;
+      counter <= 0;
+    end else begin
+      case (currentState)
+        s0: begin
+          if (counter < G2Y) begin
+            currentState <= s0;
+            counter <= counter + 1;
+          end else begin
+            currentState <= s1;
+            counter <= 0;
+          end
+        end
+        s1: begin
+          if (counter < Y2R) begin
+            currentState <= s1;
+            counter <= counter + 1;
+          end else begin
+            currentState <= s2;
+            counter <= 0;
+          end
+        end
+        s2: begin
+          if (counter < G2Y) begin
+            currentState <= s2;
+            counter <= counter + 1;
+          end else begin
+            currentState <= s3;
+            counter <= 0;
+          end
+        end
+        s3: begin
+          if (counter < Y2R) begin
+            currentState <= s3;
+            counter <= counter + 1;
+          end else begin
+            currentState<= s4;
+            counter <= 0;
+          end
+        end
+        s4: begin
+          if (counter < G2Y) begin
+            currentState <= s4;
+            counter <= counter + 1;
+          end else begin
+            currentState <= s5;
+            counter <= 0;
+          end
+        end
+        s5: begin
+          if (counter < Y2R) begin
+            currentState <= s5;
+            counter <= counter + 1;
+          end else begin
+            currentState <= s0;
+            counter <= 0;
+          end
+        end
+        default: begin
+          currentState <= s0;
+          counter <= 0;
+        end
+      endcase
+    end
+  end
+
+  always_comb begin
+    case (currentState)
+      s0: begin 
+        y1 = 3'b001;
+        y2 = 3'b001;
+        y3 = 3'b100;
+        y4 = 3'b100;
+      end
+      s1: begin 
+        y1 = 3'b001;
+        y2 = 3'b010;
+        y3 = 3'b100;
+        y4 = 3'b100;
+      end
+      s2: begin 
+        y1 = 3'b001;
+        y2 = 3'b100;
+        y3 = 3'b001;
+        y4 = 3'b100;
+      end
+      s3: begin 
+        y1 = 3'b010;
+        y2 = 3'b100;
+        y3 = 3'b010;
+        y4 = 3'b100;
+      end
+      s4: begin 
+        y1 = 3'b100;
+        y2 = 3'b100;
+        y3 = 3'b100;
+        y4 = 3'b001;
+      end
+      s5: begin 
+        y1 = 3'b100;
+        y2 = 3'b100;
+        y3 = 3'b100;
+        y4 = 3'b010;
+      end
+      default: begin 
+        y1 = 3'b000;
+        y2 = 3'b000;
+        y3 = 3'b000;
+        y4 = 3'b000;
+      end
+    endcase
+  end
+endmodule
+
+
+
+module traffic_light2_tb();
+logic clk,rst;
+logic[2:0]y1,y2,y3,y4;
+logic[5:0] counter;
+
+
+traffic_light2 dut(.clk(clk),.rst(rst),.y1(y1),.y2(y2),.y3(y3),.y4(y4),.counter(counter));
+
+initial begin
+clk=0;
+forever #10 clk=~clk;
+end
+
+initial begin
+
+rst=1;
+#100
+rst=0;
+#100;
+#200;
+#200;
+$finish;
+end
+endmodule
